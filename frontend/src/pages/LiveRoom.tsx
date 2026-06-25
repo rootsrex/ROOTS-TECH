@@ -69,7 +69,8 @@ export default function LiveRoom() {
     if (!sessionId) return;
 
     const token = localStorage.getItem('token');
-    const socket = io('/', { auth: { token } });
+    const socketUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const socket = io(socketUrl, { auth: { token } });
     socketRef.current = socket;
 
     socket.emit('session:join', sessionId);
