@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// role: VIEWER | DANCER | ADMIN
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  username     String   @unique
+  passwordHash String
+  role         String   @default("VIEWER")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  dancer       Dancer?
+  wallet       Wallet?
+  sentStickers StickerTransaction[] @relation("SenderTransactions")
+}
+
+// contentLevel: BASIC | PREMIUM | EXCLUSIVE
+model Dancer {
+  id           String  @id @default(uuid())
+  userId       String  @unique
+  displayName  String
+  bio          String  @default("")
+  avatarUrl    String  @default("")
+  isLive       Boolean @default(false)
+  isVerified   Boolean @default(false)
+  contentLevel String  @default("BASIC")
+
+  takenos      String?
+  bankAccount  String?
+  bankName     String?
+  cedula       String?
+
+  user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stickerPacks     StickerPack[]
+  sessions         LiveSession[]
+  receivedStickers StickerTransaction[] @relation("ReceiverTransactions")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Wallet {
+  id             String @id @default(uuid())
+  userId         String @unique
+  balanceUSD     Float  @default(0)
+  totalEarned    Float  @default(0)
+  totalWithdrawn Float  @default(0)
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  withdrawals Withdrawal[]
+
+  updatedAt DateTime @updatedAt
+}
+
+// contentLevel: BASIC | PREMIUM | EXCLUSIVE
+model StickerPack {
+  id           String  @id @default(uuid())
+  dancerId     String
+  name         String
+  emoji        String
+  description  String  @default("")
+  priceUSD     Float
+  contentLevel String  @default("BASIC")
+  isActive     Boolean @default(true)
+
+  dancer       Dancer               @relation(fields: [dancerId], references: [id], onDelete: Cascade)
+  transactions StickerTransaction[]
+
+  createdAt DateTime @default(now())
+}
+
+model LiveSession {
+  id          String    @id @default(uuid())
+  dancerId    String
+  title       String
+  startedAt   DateTime  @default(now())
+  endedAt     DateTime?
+  viewerCount Int       @default(0)
+  totalEarned Float     @default(0)
+
+  dancer       Dancer               @relation(fields: [dancerId], references: [id], onDelete: Cascade)
+  transactions StickerTransaction[]
+
+  createdAt DateTime @default(now())
+}
+
+// status: PENDING | COMPLETED | FAILED | REFUNDED
+model StickerTransaction {
+  id            String  @id @default(uuid())
+  senderId      String
+  dancerId      String
+  sessionId     String?
+  stickerPackId String
+  quantity      Int     @default(1)
+  totalUSD      Float
+  platformFee   Float
+  dancerEarning Float
+  message       String  @default("")
+  status        String  @default("COMPLETED")
+
+  sender      User        @relation("SenderTransactions", fields: [senderId], references: [id])
+  dancer      Dancer      @relation("ReceiverTransactions", fields: [dancerId], references: [id])
+  session     LiveSession? @relation(fields: [sessionId], references: [id])
+  stickerPack StickerPack @relation(fields: [stickerPackId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+// method: TAKENOS | BANK_TRANSFER | PAYPHONE
+// status: PENDING | PROCESSING | COMPLETED | REJECTED
+model Withdrawal {
+  id          String    @id @default(uuid())
+  walletId    String
+  amountUSD   Float
+  method      String
+  destination String
+  status      String    @default("PENDING")
+  reference   String?
+  processedAt DateTime?
+  notes       String    @default("")
+
+  wallet Wallet @relation(fields: [walletId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlatformConfig {
+  id             String @id @default("singleton")
+  commissionRate Float  @default(0.20)
+  minWithdrawal  Float  @default(10.0)
+  maxWithdrawal  Float  @default(500.0)
+}

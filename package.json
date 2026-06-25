@@ -1,0 +1,14 @@
+{
+  "name": "dancepay",
+  "version": "1.0.0",
+  "description": "DancePay - Plataforma de pagos para bailarinas en Ecuador",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "db:migrate": "cd backend && npx prisma migrate dev",
+    "db:seed": "cd backend && npx tsx src/seed.ts",
+    "db:studio": "cd backend && npx prisma studio"
+  },
+  "workspaces": ["backend", "frontend"]
+}
