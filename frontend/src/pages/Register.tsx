@@ -1,15 +1,18 @@
 import { useState, FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const defaultRole = (location.state as any)?.defaultRole || 'VIEWER';
+
   const [form, setForm] = useState({
     email: '',
     username: '',
     password: '',
-    role: 'VIEWER' as 'VIEWER' | 'DANCER',
+    role: defaultRole as 'VIEWER' | 'DANCER',
     displayName: '',
   });
   const [error, setError] = useState('');
