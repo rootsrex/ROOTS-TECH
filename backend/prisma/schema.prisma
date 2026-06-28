@@ -56,7 +56,7 @@ model Wallet {
   id             String @id @default(uuid())
   userId         String @unique
   balanceUSD     Float  @default(0)
-  coinBalance    Int    @default(0)
+  coinBalance    Float  @default(0)
   totalEarned    Float  @default(0)
   totalWithdrawn Float  @default(0)
 
@@ -100,13 +100,15 @@ model CoinPackage {
   createdAt DateTime @default(now())
 }
 
-// Solicitud de recarga de monedas (pago por TakeNos)
+// Solicitud de recarga de monedas
+// method: TAKENOS | CARD | TRANSFER | USDT
 // status: PENDING | COMPLETED | REJECTED
 model CoinTopUp {
   id          String    @id @default(uuid())
   userId      String
   packageId   String?
-  coins       Int
+  coins       Float
+  bonusCoins  Float     @default(0)
   priceUSD    Float
   method      String    @default("TAKENOS")
   reference   String    @default("")
@@ -216,9 +218,17 @@ model Withdrawal {
 }
 
 model PlatformConfig {
-  id             String @id @default("singleton")
-  commissionRate Float  @default(0.20)
-  coinToUSD      Float  @default(0.01)
-  minWithdrawal  Float  @default(10.0)
-  maxWithdrawal  Float  @default(500.0)
+  id                 String @id @default("singleton")
+  commissionRate     Float  @default(0.20)
+  coinToUSD          Float  @default(0.01)
+  takenosBonusCoins  Float  @default(0.5)
+  minWithdrawal      Float  @default(10.0)
+  maxWithdrawal      Float  @default(500.0)
+  payoutDay          String @default("WEDNESDAY")
+  takenosAdminId     String @default("")
+  bankName           String @default("")
+  bankAccount        String @default("")
+  bankAccountHolder  String @default("")
+  usdtWallet         String @default("")
+  usdtNetwork        String @default("TRC20")
 }

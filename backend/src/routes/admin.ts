@@ -109,9 +109,10 @@ router.put('/coin-topups/:id', requireAuth, requireRole('ADMIN'), async (req: Au
       data: { status, notes: notes || '', processedAt: new Date() },
     });
     if (status === 'COMPLETED') {
+      const totalCoins = topUp.coins + topUp.bonusCoins;
       await tx.wallet.update({
         where: { userId: topUp.userId },
-        data: { coinBalance: { increment: topUp.coins } },
+        data: { coinBalance: { increment: totalCoins } },
       });
     }
     return t;
@@ -145,6 +146,56 @@ router.post('/coin-packages', requireAuth, requireRole('ADMIN'), async (req: Aut
     data: { name, coins: Number(coins), priceUSD: Number(priceUSD), bonus: Number(bonus || 0), sortOrder: sortOrder || 0 },
   });
   res.status(201).json(pkg);
+});
+
+// Actualizar configuración de pagos de la plataforma
+router.put('/config', requireAuth, requireRole('ADMIN'), async (req: AuthRequest, res: Response) => {
+  const { takenosAdminId, bankName, bankAccount, bankAccountHolder, usdtWallet, usdtNetwork, takenosBonusCoins, commissionRate } = req.body;
+  const config = await prisma.platformConfig.upsert({
+    where: { id: 'singleton' },
+    update: {
+      ...(takenosAdminId !== undefined && { takenosAdminId }),
+      ...(bankName !== undefined && { bankName }),
+      ...(bankAccount !== undefined && { bankAccount }),
+      ...(bankAccountHolder !== undefined && { bankAccountHolder }),
+      ...(usdtWallet !== undefined && { usdtWallet }),
+      ...(usdtNetwork !== undefined && { usdtNetwork }),
+      ...(takenosBonusCoins !== undefined && { takenosBonusCoins: Number(takenosBonusCoins) }),
+      ...(commissionRate !== undefined && { commissionRate: Number(commissionRate) }),
+    },
+    create: { id: 'singleton', takenosAdminId: takenosAdminId || '', bankName: bankName || '', bankAccount: bankAccount || '', bankAccountHolder: bankAccountHolder || '', usdtWallet: usdtWallet || '', usdtNetwork: usdtNetwork || 'TRC20', takenosBonusCoins: 0.5 },
+  });
+  res.json(config);
+});
+
+// GET config pública (métodos de pago)
+router.get('/config', requireAuth, requireRole('ADMIN'), async (_req: AuthRequest, res: Response) => {
+  const config = await prisma.platformConfig.findUnique({ where: { id: 'singleton' } });
+  res.json(config);
+});
+
+// Listar todos los cobros pendientes de bailarinas (miércoles)
+router.get('/payouts', requireAuth, requireRole('ADMIN'), async (_req: AuthRequest, res: Response) => {
+  const dancers = await prisma.dancer.findMany({
+    include: {
+      user: { include: { wallet: true } },
+    },
+    where: {
+      user: { wallet: { coinBalance: { gt: 0 } } },
+    },
+    orderBy: { displayName: 'asc' },
+  });
+
+  const payouts = dancers.map(d => ({
+    dancerId: d.id,
+    displayName: d.displayName,
+    takenos: d.takenos,
+    whatsapp: d.whatsapp,
+    coinBalance: d.user.wallet?.coinBalance ?? 0,
+    estimatedUSD: (d.user.wallet?.coinBalance ?? 0) * 0.01,
+  }));
+
+  res.json(payouts);
 });
 
 export default router;

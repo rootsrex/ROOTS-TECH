@@ -6,6 +6,8 @@ import { io } from '../index';
 const router = Router();
 const prisma = new PrismaClient();
 
+const VALID_METHODS = ['TAKENOS', 'CARD', 'TRANSFER', 'USDT'];
+
 // GET /api/gifts — catálogo de regalos activos
 router.get('/', async (_req, res: Response) => {
   const gifts = await prisma.gift.findMany({
@@ -19,38 +21,69 @@ router.get('/', async (_req, res: Response) => {
 router.get('/packages', async (_req, res: Response) => {
   const packages = await prisma.coinPackage.findMany({
     where: { isActive: true },
-    orderBy: { coins: 'asc' },
+    orderBy: { sortOrder: 'asc' },
   });
   res.json(packages);
 });
 
+// GET /api/gifts/payment-info — info de pagos de la plataforma
+router.get('/payment-info', async (_req, res: Response) => {
+  const config = await prisma.platformConfig.findUnique({ where: { id: 'singleton' } });
+  res.json({
+    takenosBonusCoins: config?.takenosBonusCoins ?? 0.5,
+    payoutDay: config?.payoutDay ?? 'WEDNESDAY',
+    takenosAdminId: config?.takenosAdminId ?? '',
+    bankName: config?.bankName ?? '',
+    bankAccount: config?.bankAccount ?? '',
+    bankAccountHolder: config?.bankAccountHolder ?? '',
+    usdtWallet: config?.usdtWallet ?? '',
+    usdtNetwork: config?.usdtNetwork ?? 'TRC20',
+  });
+});
+
 // POST /api/gifts/topup — solicitar recarga de monedas
 router.post('/topup', requireAuth, async (req: AuthRequest, res: Response) => {
-  const { packageId, reference } = req.body;
+  const { packageId, reference, method = 'TAKENOS' } = req.body;
+
   if (!packageId || !reference) {
-    res.status(400).json({ error: 'Paquete y referencia TakeNos requeridos' });
+    res.status(400).json({ error: 'Paquete y referencia de pago requeridos' });
+    return;
+  }
+  if (!VALID_METHODS.includes(method)) {
+    res.status(400).json({ error: 'Método de pago inválido' });
     return;
   }
 
-  const pkg = await prisma.coinPackage.findUnique({ where: { id: packageId } });
+  const [pkg, config] = await Promise.all([
+    prisma.coinPackage.findUnique({ where: { id: packageId } }),
+    prisma.platformConfig.findUnique({ where: { id: 'singleton' } }),
+  ]);
+
   if (!pkg || !pkg.isActive) {
     res.status(404).json({ error: 'Paquete no encontrado' });
     return;
   }
 
+  const bonusCoins = method === 'TAKENOS' ? (config?.takenosBonusCoins ?? 0.5) : 0;
+  const totalCoins = pkg.coins + pkg.bonus;
+
   const topUp = await prisma.coinTopUp.create({
     data: {
       userId: req.user!.id,
       packageId: pkg.id,
-      coins: pkg.coins + pkg.bonus,
+      coins: totalCoins,
+      bonusCoins,
       priceUSD: pkg.priceUSD,
-      method: 'TAKENOS',
+      method,
       reference: reference.trim(),
       status: 'PENDING',
     },
   });
 
-  res.status(201).json({ topUp, message: 'Solicitud enviada. El admin aprobará en breve.' });
+  res.status(201).json({
+    topUp,
+    message: `Solicitud enviada. Recibirás ${totalCoins + bonusCoins} monedas${bonusCoins > 0 ? ` (+${bonusCoins} bonus TakeNos)` : ''} al confirmar tu pago.`,
+  });
 });
 
 // GET /api/gifts/my-topups — mis solicitudes de recarga
@@ -85,25 +118,15 @@ router.post('/send', requireAuth, async (req: AuthRequest, res: Response) => {
 
   const totalCoins = gift.coinCost * quantity;
   if (wallet.coinBalance < totalCoins) {
-    res.status(400).json({ error: `Monedas insuficientes. Necesitas ${totalCoins}, tienes ${wallet.coinBalance}` });
+    res.status(400).json({ error: `Monedas insuficientes. Necesitas ${totalCoins}, tienes ${Math.floor(wallet.coinBalance)}` });
     return;
   }
 
-  // commission 20% stays on platform, 80% to dancer as coins
-  const coinsEarned = Math.floor(totalCoins * 0.8);
+  const coinsEarned = totalCoins * 0.8;
 
   const [tx] = await prisma.$transaction([
     prisma.giftTransaction.create({
-      data: {
-        senderId: req.user!.id,
-        dancerId,
-        sessionId: sessionId || null,
-        giftId,
-        quantity,
-        coinsCost: totalCoins,
-        coinsEarned,
-        message,
-      },
+      data: { senderId: req.user!.id, dancerId, sessionId: sessionId || null, giftId, quantity, coinsCost: totalCoins, coinsEarned, message },
       include: { gift: true, sender: { select: { username: true } } },
     }),
     prisma.wallet.update({
@@ -116,15 +139,9 @@ router.post('/send', requireAuth, async (req: AuthRequest, res: Response) => {
     }),
   ]);
 
-  // Emitir evento de regalo en tiempo real
   if (sessionId) {
     io.to(`session:${sessionId}`).emit('gift_received', {
-      gift: gift,
-      sender: req.user!.id,
-      senderName: (tx as any).sender?.username,
-      quantity,
-      message,
-      animation: gift.animation,
+      gift, senderName: (tx as any).sender?.username, quantity, message, animation: gift.animation,
     });
   }
 

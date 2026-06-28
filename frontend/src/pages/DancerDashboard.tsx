@@ -162,6 +162,15 @@ export default function DancerDashboard() {
         )}
       </div>
 
+      {/* Aviso cobros miércoles */}
+      <div className="bg-green-900/20 border border-green-700/40 rounded-xl p-3 flex items-center gap-3">
+        <span className="text-2xl">📅</span>
+        <div>
+          <div className="text-sm font-semibold text-green-300">Cobros los miércoles vía TakeNos</div>
+          <div className="text-xs text-gray-400">Cada miércoles procesamos tu saldo de monedas. Asegúrate de tener tu ID de TakeNos configurado.</div>
+        </div>
+      </div>
+
       {msg && <div className="bg-green-900/50 border border-green-700 text-green-300 rounded-lg p-3 text-sm">{msg}</div>}
       {error && <div className="bg-red-900/50 border border-red-700 text-red-300 rounded-lg p-3 text-sm">{error}</div>}
 
