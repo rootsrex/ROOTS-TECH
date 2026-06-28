@@ -1,9 +1,9 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd backend && npm install --include=dev && sed -i 's/provider = \"sqlite\"/provider = \"postgresql\"/' prisma/schema.prisma && npx prisma generate && npx prisma db push --skip-generate && npx tsc && cd ../frontend && npm install --include=dev && npm run build"
+buildCommand = "cd backend && npm install --include=dev && sed -i 's/provider = \"sqlite\"/provider = \"postgresql\"/' prisma/schema.prisma && npx prisma generate && npx tsc && cd ../frontend && npm install --include=dev && npm run build"
 
 [deploy]
-startCommand = "cd backend && node dist/index.js"
+startCommand = "cd backend && npx prisma db push --skip-generate & node dist/index.js"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
 
