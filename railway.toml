@@ -1,6 +1,6 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd backend && npm install && sed -i 's/provider = \"sqlite\"/provider = \"postgresql\"/' prisma/schema.prisma && npx prisma generate && npm run build && npx prisma db push"
+buildCommand = "cd backend && npm install && npx prisma generate && npm run build"
 
 [deploy]
 startCommand = "cd backend && node dist/index.js"
