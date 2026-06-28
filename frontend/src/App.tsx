@@ -5,6 +5,8 @@ import Landing from './pages/Landing';
 import Explore from './pages/Explore';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import OAuthCallback from './pages/OAuthCallback';
+import OAuthSetup from './pages/OAuthSetup';
 import DancerProfile from './pages/DancerProfile';
 import LiveRoom from './pages/LiveRoom';
 import DancerDashboard from './pages/DancerDashboard';
@@ -40,6 +42,8 @@ function AppRoutes() {
                 <Route path="explore" element={<Explore />} />
                 <Route path="login" element={<Login />} />
                 <Route path="register" element={<Register />} />
+                <Route path="oauth-callback" element={<OAuthCallback />} />
+                <Route path="oauth-setup" element={<OAuthSetup />} />
                 <Route path="dancer/:id" element={<DancerProfile />} />
                 <Route path="live/:sessionId" element={<LiveRoom />} />
                 <Route path="dashboard" element={
