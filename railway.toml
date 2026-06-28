@@ -3,9 +3,7 @@ builder = "nixpacks"
 buildCommand = "cd backend && npm install --include=dev && sed -i 's/provider = \"sqlite\"/provider = \"postgresql\"/' prisma/schema.prisma && npx prisma generate && npx tsc && cd ../frontend && npm install --include=dev && npm run build"
 
 [deploy]
-startCommand = "cd backend && npx prisma db push && node dist/index.js"
-healthcheckPath = "/api/health"
-healthcheckTimeout = 120
+startCommand = "cd backend && npx prisma db push --skip-generate && node dist/index.js"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
 
