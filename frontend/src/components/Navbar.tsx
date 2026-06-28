@@ -34,9 +34,16 @@ export default function Navbar() {
                   Mi Dashboard
                 </Link>
               )}
-              <Link to="/wallet" className={`text-sm transition-colors ${isActive('/wallet')}`}>
-                💰 {user.wallet ? `$${user.wallet.balanceUSD.toFixed(2)}` : 'Billetera'}
-              </Link>
+              {user.role !== 'DANCER' && (
+                <Link to="/coins" className={`text-sm transition-colors ${isActive('/coins')}`}>
+                  🪙 {(user as any).wallet?.coinBalance ?? 0}
+                </Link>
+              )}
+              {user.role === 'DANCER' && (
+                <Link to="/wallet" className={`text-sm transition-colors ${isActive('/wallet')}`}>
+                  💰 {user.wallet ? `$${user.wallet.balanceUSD.toFixed(2)}` : 'Billetera'}
+                </Link>
+              )}
               <span className="text-sm text-gray-600 hidden sm:inline">@{user.username}</span>
               <button onClick={handleLogout} className="btn-secondary text-sm py-1.5 px-3">
                 Salir

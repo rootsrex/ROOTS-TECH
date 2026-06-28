@@ -11,6 +11,7 @@ import DancerProfile from './pages/DancerProfile';
 import LiveRoom from './pages/LiveRoom';
 import DancerDashboard from './pages/DancerDashboard';
 import ViewerWallet from './pages/ViewerWallet';
+import CoinsShop from './pages/CoinsShop';
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode; role?: string }) {
   const { user, loading } = useAuth();
@@ -51,6 +52,9 @@ function AppRoutes() {
                 } />
                 <Route path="wallet" element={
                   <ProtectedRoute><ViewerWallet /></ProtectedRoute>
+                } />
+                <Route path="coins" element={
+                  <ProtectedRoute><CoinsShop /></ProtectedRoute>
                 } />
               </Routes>
             </main>

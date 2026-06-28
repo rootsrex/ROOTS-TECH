@@ -15,6 +15,7 @@ import sessionRoutes from './routes/sessions';
 import transactionRoutes from './routes/transactions';
 import walletRoutes from './routes/wallet';
 import adminRoutes from './routes/admin';
+import giftRoutes from './routes/gifts';
 import { setupSocket } from './socket/socket';
 
 dotenv.config();
@@ -54,6 +55,7 @@ app.use('/api/sessions', sessionRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/wallet', walletRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/gifts', giftRoutes);
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

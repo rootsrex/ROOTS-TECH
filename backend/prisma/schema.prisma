@@ -18,9 +18,11 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  dancer       Dancer?
-  wallet       Wallet?
-  sentStickers StickerTransaction[] @relation("SenderTransactions")
+  dancer           Dancer?
+  wallet           Wallet?
+  sentStickers     StickerTransaction[] @relation("SenderTransactions")
+  sentGifts        GiftTransaction[]    @relation("SenderGiftTransactions")
+  coinTopUps       CoinTopUp[]
 }
 
 // contentLevel: BASIC | PREMIUM | EXCLUSIVE
@@ -44,6 +46,7 @@ model Dancer {
   stickerPacks     StickerPack[]
   sessions         LiveSession[]
   receivedStickers StickerTransaction[] @relation("ReceiverTransactions")
+  receivedGifts    GiftTransaction[]    @relation("ReceivedGifts")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -53,6 +56,7 @@ model Wallet {
   id             String @id @default(uuid())
   userId         String @unique
   balanceUSD     Float  @default(0)
+  coinBalance    Int    @default(0)
   totalEarned    Float  @default(0)
   totalWithdrawn Float  @default(0)
 
@@ -60,6 +64,81 @@ model Wallet {
   withdrawals Withdrawal[]
 
   updatedAt DateTime @updatedAt
+}
+
+// Catálogo de regalos de la plataforma
+// category: BASIC | PREMIUM | EXCLUSIVE
+// animation: pop | float | rain | explosion
+model Gift {
+  id          String  @id @default(uuid())
+  name        String
+  emoji       String
+  description String  @default("")
+  coinCost    Int
+  category    String  @default("BASIC")
+  animation   String  @default("pop")
+  isActive    Boolean @default(true)
+  sortOrder   Int     @default(0)
+
+  transactions GiftTransaction[]
+
+  createdAt DateTime @default(now())
+}
+
+// Paquetes de monedas para comprar
+model CoinPackage {
+  id        String  @id @default(uuid())
+  name      String
+  coins     Int
+  priceUSD  Float
+  bonus     Int     @default(0)
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  topUps CoinTopUp[]
+
+  createdAt DateTime @default(now())
+}
+
+// Solicitud de recarga de monedas (pago por TakeNos)
+// status: PENDING | COMPLETED | REJECTED
+model CoinTopUp {
+  id          String    @id @default(uuid())
+  userId      String
+  packageId   String?
+  coins       Int
+  priceUSD    Float
+  method      String    @default("TAKENOS")
+  reference   String    @default("")
+  status      String    @default("PENDING")
+  processedAt DateTime?
+  notes       String    @default("")
+
+  user    User         @relation(fields: [userId], references: [id])
+  package CoinPackage? @relation(fields: [packageId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Transacción de regalo con monedas
+model GiftTransaction {
+  id          String  @id @default(uuid())
+  senderId    String
+  dancerId    String
+  sessionId   String?
+  giftId      String
+  quantity    Int     @default(1)
+  coinsCost   Int
+  coinsEarned Int
+  message     String  @default("")
+
+  sender  User         @relation("SenderGiftTransactions", fields: [senderId], references: [id])
+  dancer  Dancer       @relation("ReceivedGifts", fields: [dancerId], references: [id])
+  session LiveSession? @relation(fields: [sessionId], references: [id])
+  gift    Gift         @relation(fields: [giftId], references: [id])
+
+  createdAt DateTime @default(now())
 }
 
 // contentLevel: BASIC | PREMIUM | EXCLUSIVE
@@ -88,8 +167,9 @@ model LiveSession {
   viewerCount Int       @default(0)
   totalEarned Float     @default(0)
 
-  dancer       Dancer               @relation(fields: [dancerId], references: [id], onDelete: Cascade)
-  transactions StickerTransaction[]
+  dancer           Dancer               @relation(fields: [dancerId], references: [id], onDelete: Cascade)
+  transactions     StickerTransaction[]
+  giftTransactions GiftTransaction[]
 
   createdAt DateTime @default(now())
 }
@@ -108,15 +188,15 @@ model StickerTransaction {
   message       String  @default("")
   status        String  @default("COMPLETED")
 
-  sender      User        @relation("SenderTransactions", fields: [senderId], references: [id])
-  dancer      Dancer      @relation("ReceiverTransactions", fields: [dancerId], references: [id])
+  sender      User         @relation("SenderTransactions", fields: [senderId], references: [id])
+  dancer      Dancer       @relation("ReceiverTransactions", fields: [dancerId], references: [id])
   session     LiveSession? @relation(fields: [sessionId], references: [id])
-  stickerPack StickerPack @relation(fields: [stickerPackId], references: [id])
+  stickerPack StickerPack  @relation(fields: [stickerPackId], references: [id])
 
   createdAt DateTime @default(now())
 }
 
-// method: TAKENOS | BANK_TRANSFER | PAYPHONE
+// method: TAKENOS | BANK_TRANSFER
 // status: PENDING | PROCESSING | COMPLETED | REJECTED
 model Withdrawal {
   id          String    @id @default(uuid())
@@ -138,6 +218,7 @@ model Withdrawal {
 model PlatformConfig {
   id             String @id @default("singleton")
   commissionRate Float  @default(0.20)
+  coinToUSD      Float  @default(0.01)
   minWithdrawal  Float  @default(10.0)
   maxWithdrawal  Float  @default(500.0)
 }
