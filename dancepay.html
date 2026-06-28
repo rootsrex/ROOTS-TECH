@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DancePay 💃 — Cobra bailando en Ecuador</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          300: '#f9a8d4',
+          400: '#f472b6',
+          500: '#ec4899',
+          600: '#db2777',
+          700: '#be185d',
+          900: '#831843',
+          950: '#500724',
+        }
+      },
+      animation: {
+        'float': 'float 3s ease-in-out infinite',
+        'float2': 'float 3.5s ease-in-out infinite 0.5s',
+        'float3': 'float 4s ease-in-out infinite 1s',
+      },
+      keyframes: {
+        float: {
+          '0%,100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-18px)' },
+        }
+      }
+    }
+  }
+}
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+  * { font-family: 'Inter', system-ui, sans-serif; }
+  html { scroll-behavior: smooth; }
+  body { background: #030712; color: #fff; overflow-x: hidden; }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #f472b6, #fb923c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-glow {
+    background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(219,39,119,0.18), transparent);
+  }
+  .card {
+    background: rgba(17,24,39,0.8);
+    border: 1px solid rgba(55,65,81,0.8);
+    border-radius: 16px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover { border-color: rgba(219,39,119,0.5); }
+  .btn-primary {
+    background: linear-gradient(135deg, #db2777, #be185d);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 14px 32px;
+    display: inline-block;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 8px 32px rgba(219,39,119,0.3);
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(219,39,119,0.45); }
+  .btn-secondary {
+    background: rgba(31,41,55,0.9);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 14px 32px;
+    display: inline-block;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 1px solid rgba(75,85,99,0.8);
+    cursor: pointer;
+    font-size: 16px;
+  }
+  .btn-secondary:hover { background: rgba(55,65,81,0.9); transform: translateY(-2px); }
+
+  .emoji-float { position:absolute; font-size:28px; opacity:0.15; animation: float 3s ease-in-out infinite; pointer-events:none; user-select:none; }
+  .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.25s; }
+  .faq-answer.open { max-height: 200px; }
+  .faq-btn .icon { transition: transform 0.3s; display:inline-block; }
+  .faq-btn.open .icon { transform: rotate(45deg); }
+
+  .badge-basic { background: rgba(20,83,45,0.6); color: #86efac; border: 1px solid rgba(34,197,94,0.3); }
+  .badge-premium { background: rgba(88,28,135,0.6); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.3); }
+  .badge-exclusive { background: rgba(120,53,15,0.6); color: #fde68a; border: 1px solid rgba(245,158,11,0.3); }
+
+  .live-dot { width:10px; height:10px; background:#ef4444; border-radius:50%; animation:pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+
+  .step-line { position:absolute; top:32px; left:calc(50% + 60px); right:calc(-50% + 60px); height:2px; background:linear-gradient(90deg,#db2777,#f472b6); }
+
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:#111; }
+  ::-webkit-scrollbar-thumb { background:#db2777; border-radius:3px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ NAVBAR ═══════ -->
+<nav style="background:rgba(3,7,18,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(55,65,81,0.5)" class="sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+    <div class="flex items-center gap-8">
+      <a href="#" class="text-xl font-black" style="color:#f472b6">💃 DancePay</a>
+      <a href="#explorar" class="text-sm text-gray-400 hover:text-white transition-colors hidden sm:block">Explorar</a>
+      <a href="#como-funciona" class="text-sm text-gray-400 hover:text-white transition-colors hidden sm:block">Cómo funciona</a>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="#registro" class="text-sm text-gray-400 hover:text-white transition-colors">Ingresar</a>
+      <a href="#registro" class="btn-primary text-sm" style="padding:8px 20px;border-radius:8px">Registrarse</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════ HERO ═══════ -->
+<section class="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden hero-glow">
+
+  <!-- emojis decorativos -->
+  <span class="emoji-float" style="left:4%;top:15%;animation-duration:3s">💃</span>
+  <span class="emoji-float" style="left:14%;top:55%;animation-duration:4s;animation-delay:.3s">🔥</span>
+  <span class="emoji-float" style="left:24%;top:25%;animation-duration:3.5s;animation-delay:.6s">⭐</span>
+  <span class="emoji-float" style="left:75%;top:18%;animation-duration:3.2s;animation-delay:.2s">💎</span>
+  <span class="emoji-float" style="left:85%;top:50%;animation-duration:4.2s;animation-delay:.8s">🌟</span>
+  <span class="emoji-float" style="left:92%;top:28%;animation-duration:3.8s;animation-delay:.4s">❤️</span>
+  <span class="emoji-float" style="left:50%;top:10%;animation-duration:3.6s;animation-delay:1s">✨</span>
+  <span class="emoji-float" style="left:60%;top:70%;animation-duration:3.3s;animation-delay:.7s">🎵</span>
+
+  <div class="relative z-10 max-w-4xl mx-auto">
+    <div class="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full text-sm" style="background:rgba(131,24,67,0.3);border:1px solid rgba(219,39,119,0.4);color:#f9a8d4">
+      <span class="live-dot"></span>
+      Plataforma 100% ecuatoriana
+    </div>
+
+    <h1 class="font-black leading-none mb-6" style="font-size:clamp(3rem,9vw,6.5rem)">
+      Cobra bailando.<br>
+      <span class="gradient-text">En tiempo real.</span>
+    </h1>
+
+    <p class="text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed" style="font-size:clamp(1rem,2.5vw,1.3rem)">
+      La primera plataforma ecuatoriana donde las bailarinas ganan dinero real
+      recibiendo stickers en vivo. Retira directo a <strong class="text-white">Takenos</strong> o tu banco.
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="#registro" class="btn-primary text-lg">💃 Quiero cobrar bailando</a>
+      <a href="#explorar" class="btn-secondary text-lg">👁 Quiero ver shows</a>
+    </div>
+    <p class="text-xs text-gray-600 mt-4">Gratis para registrarse · Sin tarjeta requerida</p>
+  </div>
+
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-gray-600 text-xs flex flex-col items-center gap-1 animate-bounce">
+    <span>Descubre más</span>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ STATS ═══════ -->
+<section style="background:rgba(17,24,39,0.5);border-top:1px solid rgba(55,65,81,0.5);border-bottom:1px solid rgba(55,65,81,0.5)" class="py-14">
+  <div class="max-w-5xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+    <div><div class="font-black mb-1" style="font-size:3rem;color:#f472b6">80%</div><div class="text-sm text-gray-400">Para la bailarina</div></div>
+    <div><div class="font-black mb-1" style="font-size:3rem;color:#f472b6">$1</div><div class="text-sm text-gray-400">Mínimo por sticker</div></div>
+    <div><div class="font-black mb-1" style="font-size:3rem;color:#f472b6">2 días</div><div class="text-sm text-gray-400">Para cobrar</div></div>
+    <div><div class="font-black mb-1" style="font-size:3rem;color:#f472b6">100%</div><div class="text-sm text-gray-400">Tú pones el precio</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ CÓMO FUNCIONA ═══════ -->
+<section id="como-funciona" class="py-28 px-4 max-w-5xl mx-auto">
+  <div class="text-center mb-20">
+    <h2 class="font-black mb-4" style="font-size:clamp(2rem,5vw,3.5rem)">¿Cómo funciona?</h2>
+    <p class="text-gray-400 text-lg">En 3 pasos, simple y directo</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
+    <!-- línea conectora -->
+    <div class="hidden md:block absolute" style="top:40px;left:calc(33% + 20px);width:calc(34% - 40px);height:2px;background:linear-gradient(90deg,#db2777,#f472b6)"></div>
+    <div class="hidden md:block absolute" style="top:40px;left:calc(67% + 20px);width:calc(33% - 60px);height:2px;background:linear-gradient(90deg,#f472b6,#fb923c)"></div>
+
+    <div class="text-center">
+      <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-5" style="background:rgba(131,24,67,0.3);border:1px solid rgba(219,39,119,0.4)">🎭</div>
+      <div class="text-xs font-bold mb-2 tracking-widest" style="color:#f472b6">PASO 01</div>
+      <h3 class="text-xl font-bold mb-3">Crea tu perfil</h3>
+      <p class="text-gray-400 text-sm leading-relaxed">Regístrate como bailarina, sube tu foto y define tus stickers con el precio que tú quieras. Desde $1 hasta $500.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-5" style="background:rgba(131,24,67,0.3);border:1px solid rgba(219,39,119,0.4)">🔴</div>
+      <div class="text-xs font-bold mb-2 tracking-widest" style="color:#f472b6">PASO 02</div>
+      <h3 class="text-xl font-bold mb-3">Baila en vivo</h3>
+      <p class="text-gray-400 text-sm leading-relaxed">Inicia una sesión en vivo. Tu audiencia te envía stickers mientras bailas. El dinero entra en tiempo real a tu billetera.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-5" style="background:rgba(131,24,67,0.3);border:1px solid rgba(219,39,119,0.4)">💸</div>
+      <div class="text-xs font-bold mb-2 tracking-widest" style="color:#f472b6">PASO 03</div>
+      <h3 class="text-xl font-bold mb-3">Cobra en Ecuador</h3>
+      <p class="text-gray-400 text-sm leading-relaxed">Retira tus ganancias cuando quieras directo a Takenos, tu cuenta bancaria o Payphone. En 1-2 días hábiles.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ PARA BAILARINAS ═══════ -->
+<section style="background:linear-gradient(180deg,#030712,rgba(131,24,67,0.08),#030712)" class="py-28 px-4">
+  <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+    <div>
+      <div class="inline-block px-3 py-1 rounded-full text-xs mb-5" style="background:rgba(131,24,67,0.3);border:1px solid rgba(219,39,119,0.4);color:#f9a8d4">Para bailarinas</div>
+      <h2 class="font-black mb-6 leading-tight" style="font-size:clamp(2rem,4vw,3rem)">
+        Tu talento vale dinero.<br>
+        <span class="gradient-text">Tú decides cuánto.</span>
+      </h2>
+      <p class="text-gray-400 mb-8 leading-relaxed">Crea tus propios stickers: un saludo, 30 segundos de baile, un show privado. Pon el precio que tú quieras y cobra cada vez que alguien te los envíe.</p>
+      <ul class="space-y-3 mb-9">
+        <li class="text-sm text-gray-300 flex items-center gap-2"><span style="color:#4ade80">✅</span> Crea stickers con el precio que tú decides</li>
+        <li class="text-sm text-gray-300 flex items-center gap-2"><span style="color:#4ade80">✅</span> Cobra el 80% de cada sticker recibido</li>
+        <li class="text-sm text-gray-300 flex items-center gap-2"><span style="color:#4ade80">✅</span> Retira a Takenos, banco o Payphone</li>
+        <li class="text-sm text-gray-300 flex items-center gap-2"><span style="color:#4ade80">✅</span> Gestiona todo desde tu dashboard</li>
+        <li class="text-sm text-gray-300 flex items-center gap-2"><span style="color:#4ade80">✅</span> Sesiones en vivo con chat en tiempo real</li>
+      </ul>
+      <a href="#registro" class="btn-primary">Empezar a cobrar →</a>
+    </div>
+
+    <!-- Dashboard mockup -->
+    <div class="card p-5 shadow-2xl" style="background:rgba(17,24,39,0.95)">
+      <div class="flex items-center gap-2 mb-5">
+        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+        <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+        <span class="text-xs text-gray-600 ml-2">Mi Dashboard — Valentina 💃</span>
+      </div>
+      <div class="grid grid-cols-3 gap-3 mb-5">
+        <div class="rounded-xl p-3 text-center" style="background:#111827">
+          <div class="font-black text-lg" style="color:#f472b6">$47.20</div>
+          <div class="text-xs text-gray-500 mt-0.5">Disponible</div>
+        </div>
+        <div class="rounded-xl p-3 text-center" style="background:#111827">
+          <div class="font-black text-lg text-green-400">$121.60</div>
+          <div class="text-xs text-gray-500 mt-0.5">Ganado</div>
+        </div>
+        <div class="rounded-xl p-3 text-center" style="background:#111827">
+          <div class="font-black text-lg text-gray-300">$74.40</div>
+          <div class="text-xs text-gray-500 mt-0.5">Retirado</div>
+        </div>
+      </div>
+      <div class="text-xs text-gray-600 mb-3 font-semibold tracking-wider">MIS STICKERS</div>
+      <div class="space-y-0">
+        <div class="flex items-center gap-3 py-2.5 border-b" style="border-color:rgba(55,65,81,0.5)">
+          <span class="text-xl">👋</span><span class="text-sm flex-1">Saludo</span>
+          <span class="text-xs px-2 py-0.5 rounded-full badge-basic">Básico</span>
+          <span class="font-bold text-sm" style="color:#f472b6">$1.00</span>
+        </div>
+        <div class="flex items-center gap-3 py-2.5 border-b" style="border-color:rgba(55,65,81,0.5)">
+          <span class="text-xl">💃</span><span class="text-sm flex-1">Baile Básico</span>
+          <span class="text-xs px-2 py-0.5 rounded-full badge-basic">Básico</span>
+          <span class="font-bold text-sm" style="color:#f472b6">$3.00</span>
+        </div>
+        <div class="flex items-center gap-3 py-2.5 border-b" style="border-color:rgba(55,65,81,0.5)">
+          <span class="text-xl">🔥</span><span class="text-sm flex-1">Baile Premium</span>
+          <span class="text-xs px-2 py-0.5 rounded-full badge-premium">Premium</span>
+          <span class="font-bold text-sm" style="color:#f472b6">$10.00</span>
+        </div>
+        <div class="flex items-center gap-3 py-2.5">
+          <span class="text-xl">💎</span><span class="text-sm flex-1">Show Exclusivo</span>
+          <span class="text-xs px-2 py-0.5 rounded-full badge-exclusive">Exclusivo</span>
+          <span class="font-bold text-sm" style="color:#f472b6">$50.00</span>
+        </div>
+      </div>
+      <button class="w-full mt-5 py-3 rounded-xl font-bold text-sm" style="background:linear-gradient(135deg,#db2777,#be185d);color:#fff">
+        🔴 Iniciar sesión en vivo
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ PARA ESPECTADORES ═══════ -->
+<section class="py-28 px-4 max-w-5xl mx-auto">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+
+    <!-- Live room mockup -->
+    <div class="card overflow-hidden shadow-2xl order-2 md:order-1" style="background:rgba(17,24,39,0.95)">
+      <div class="relative flex items-center justify-center" style="background:#111827;aspect-ratio:16/9">
+        <div style="font-size:4rem">💃</div>
+        <div class="absolute top-3 left-3 flex gap-2">
+          <span class="text-xs px-2 py-0.5 rounded font-bold text-white" style="background:#dc2626">🔴 EN VIVO</span>
+          <span class="text-xs px-2 py-0.5 rounded text-white" style="background:rgba(0,0,0,0.6)">👁 247</span>
+        </div>
+        <div class="absolute top-3 right-3">
+          <span class="text-xs px-2 py-0.5 rounded font-bold text-white" style="background:rgba(219,39,119,0.8)">💰 $89.40</span>
+        </div>
+        <!-- stickers flotando -->
+        <div class="absolute text-3xl" style="bottom:40%;left:12%;animation:float 2.5s ease-in-out infinite">💃</div>
+        <div class="absolute text-3xl" style="bottom:30%;left:38%;animation:float 3s ease-in-out infinite 0.5s">🔥</div>
+        <div class="absolute text-3xl" style="bottom:50%;left:64%;animation:float 2.8s ease-in-out infinite 0.8s">⭐</div>
+      </div>
+      <div class="p-4">
+        <div class="text-xs text-gray-600 font-semibold mb-3 tracking-wider">ENVIAR STICKER</div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="rounded-lg p-2.5 flex items-center gap-2 cursor-pointer transition-colors" style="background:#1f2937;border:1px solid rgba(55,65,81,0.5)">
+            <span class="text-xl">👋</span><div><div class="text-xs font-medium">Saludo</div><div class="text-xs font-bold" style="color:#f472b6">$1.00</div></div>
+          </div>
+          <div class="rounded-lg p-2.5 flex items-center gap-2 cursor-pointer" style="background:#1f2937;border:1px solid rgba(55,65,81,0.5)">
+            <span class="text-xl">💃</span><div><div class="text-xs font-medium">Baile</div><div class="text-xs font-bold" style="color:#f472b6">$3.00</div></div>
+          </div>
+          <div class="rounded-lg p-2.5 flex items-center gap-2 cursor-pointer" style="background:#1f2937;border:1px solid rgba(55,65,81,0.5)">
+            <span class="text-xl">🔥</span><div><div class="text-xs font-medium">Premium</div><div class="text-xs font-bold" style="color:#f472b6">$10.00</div></div>
+          </div>
+          <div class="rounded-lg p-2.5 flex items-center gap-2 cursor-pointer" style="background:#1f2937;border:1px solid rgba(55,65,81,0.5)">
+            <span class="text-xl">💎</span><div><div class="text-xs font-medium">Exclusivo</div><div class="text-xs font-bold" style="color:#f472b6">$50.00</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-1 md:order-2">
+      <div class="inline-block px-3 py-1 rounded-full text-xs mb-5" style="background:rgba(30,58,138,0.3);border:1px solid rgba(59,130,246,0.4);color:#93c5fd">Para espectadores</div>
+      <h2 class="font-black mb-6 leading-tight" style="font-size:clamp(2rem,4vw,3rem)">
+        Apoya a tus<br>
+        <span class="gradient-text">favoritas en vivo.</span>
+      </h2>
+      <p class="text-gray-400 mb-8 leading-relaxed">Descubre bailarinas increíbles, entra a sus shows en vivo y envíales stickers. Cada sticker es dinero real que llega directamente a ellas.</p>
+      <ul class="space-y-3 mb-9">
+        <li class="text-sm text-gray-300 flex items-center gap-2"><span style="color:#4ade80">✅</span> Explora shows en vivo gratis</li>
+        <li class="text-sm text-gray-300 flex items-center gap-2"><span style="color:#4ade80">✅</span> Envía stickers desde $1</li>
+        <li class="text-sm text-gray-300 flex items-center gap-2"><span style="color:#4ade80">✅</span> Tu mensaje aparece en pantalla</li>
+        <li class="text-sm text-gray-300 flex items-center gap-2"><span style="color:#4ade80">✅</span> Recarga con tarjeta o Payphone</li>
+        <li class="text-sm text-gray-300 flex items-center gap-2"><span style="color:#4ade80">✅</span> Chat en tiempo real con la bailarina</li>
+      </ul>
+      <a href="#registro" class="btn-secondary">Empezar gratis →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ BAILARINAS ═══════ -->
+<section id="explorar" style="background:rgba(17,24,39,0.4);border-top:1px solid rgba(55,65,81,0.4);border-bottom:1px solid rgba(55,65,81,0.4)" class="py-24">
+  <div class="max-w-5xl mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="font-black mb-3" style="font-size:clamp(2rem,4vw,3rem)">Bailarinas en la plataforma</h2>
+      <p class="text-gray-400">Descubre quiénes ya están cobrando</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      <div class="card p-4 cursor-pointer hover:-translate-y-1" style="transition:all .2s">
+        <div class="flex items-start gap-3">
+          <div class="relative flex-shrink-0">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center text-2xl" style="background:linear-gradient(135deg,#db2777,#831843)">💃</div>
+            <span class="absolute -bottom-1 -right-1 text-white text-xs px-1.5 py-0.5 rounded-full font-bold" style="background:#dc2626">LIVE</span>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-1"><span class="font-semibold text-sm">Valentina</span><span>✅</span></div>
+            <div class="text-xs text-gray-500">@valentina_dance</div>
+            <div class="flex items-center gap-2 mt-1.5">
+              <span class="text-xs font-bold" style="color:#f472b6">Desde $1.00</span>
+              <span class="text-xs px-1.5 py-0.5 rounded-full badge-basic">Básico</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-4 cursor-pointer hover:-translate-y-1" style="transition:all .2s">
+        <div class="flex items-start gap-3">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center text-2xl flex-shrink-0" style="background:linear-gradient(135deg,#7c3aed,#4c1d95)">🔥</div>
+          <div class="flex-1">
+            <div class="font-semibold text-sm">Daniela Fuego</div>
+            <div class="text-xs text-gray-500">@dani_fuego</div>
+            <div class="flex items-center gap-2 mt-1.5">
+              <span class="text-xs font-bold" style="color:#f472b6">Desde $5.00</span>
+              <span class="text-xs px-1.5 py-0.5 rounded-full badge-premium">Premium</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-4 cursor-pointer hover:-translate-y-1" style="transition:all .2s">
+        <div class="flex items-start gap-3">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center text-2xl flex-shrink-0" style="background:linear-gradient(135deg,#b45309,#78350f)">💎</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-1"><span class="font-semibold text-sm">Luna Exclusiva</span><span>✅</span></div>
+            <div class="text-xs text-gray-500">@luna_ec</div>
+            <div class="flex items-center gap-2 mt-1.5">
+              <span class="text-xs font-bold" style="color:#f472b6">Desde $10.00</span>
+              <span class="text-xs px-1.5 py-0.5 rounded-full badge-exclusive">Exclusivo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-4 cursor-pointer hover:-translate-y-1" style="transition:all .2s">
+        <div class="flex items-start gap-3">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center text-2xl flex-shrink-0" style="background:linear-gradient(135deg,#065f46,#064e3b)">🌟</div>
+          <div class="flex-1">
+            <div class="font-semibold text-sm">Estrella Guayaquil</div>
+            <div class="text-xs text-gray-500">@estrella_gye</div>
+            <div class="flex items-center gap-2 mt-1.5">
+              <span class="text-xs font-bold" style="color:#f472b6">Desde $2.00</span>
+              <span class="text-xs px-1.5 py-0.5 rounded-full badge-basic">Básico</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-4 cursor-pointer hover:-translate-y-1" style="transition:all .2s">
+        <div class="flex items-start gap-3">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center text-2xl flex-shrink-0" style="background:linear-gradient(135deg,#9d174d,#831843)">❤️</div>
+          <div class="flex-1">
+            <div class="font-semibold text-sm">Corazón Quito</div>
+            <div class="text-xs text-gray-500">@corazon_uio</div>
+            <div class="flex items-center gap-2 mt-1.5">
+              <span class="text-xs font-bold" style="color:#f472b6">Desde $3.00</span>
+              <span class="text-xs px-1.5 py-0.5 rounded-full badge-premium">Premium</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Placeholder unirse -->
+      <a href="#registro" class="card p-4 flex items-center justify-center cursor-pointer hover:-translate-y-1" style="transition:all .2s;border-style:dashed;min-height:90px">
+        <div class="text-center">
+          <div class="text-2xl mb-1">➕</div>
+          <div class="text-sm text-gray-500">¿Quieres aparecer aquí?</div>
+          <div class="text-xs" style="color:#f472b6">Regístrate gratis</div>
+        </div>
+      </a>
+
+    </div>
+    <div class="text-center mt-10">
+      <a href="#registro" class="btn-secondary" style="padding:10px 28px;font-size:14px">Ver todas las bailarinas →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ PAGOS ECUADOR ═══════ -->
+<section class="py-24 px-4 max-w-5xl mx-auto text-center">
+  <h2 class="font-black mb-4" style="font-size:clamp(2rem,4vw,3rem)">Cobras en Ecuador, sin complicaciones</h2>
+  <p class="text-gray-400 mb-14">Usamos los métodos de pago que ya conoces</p>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <div class="card p-8 hover:-translate-y-1" style="transition:all .2s">
+      <div class="text-5xl mb-4">📱</div>
+      <h3 class="font-bold text-lg mb-2">Takenos</h3>
+      <p class="text-sm text-gray-400">Transferencia inmediata a tu app Takenos. El método más rápido disponible.</p>
+    </div>
+    <div class="card p-8 hover:-translate-y-1" style="transition:all .2s">
+      <div class="text-5xl mb-4">🏦</div>
+      <h3 class="font-bold text-lg mb-2">Transferencia Bancaria</h3>
+      <p class="text-sm text-gray-400">Banco Pichincha, Produbanco, Banco del Pacífico y más bancos ecuatorianos.</p>
+    </div>
+    <div class="card p-8 hover:-translate-y-1" style="transition:all .2s">
+      <div class="text-5xl mb-4">💳</div>
+      <h3 class="font-bold text-lg mb-2">Payphone</h3>
+      <p class="text-sm text-gray-400">Retira directo a tu cuenta Payphone. Disponible 24/7 sin restricciones.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ FAQ ═══════ -->
+<section style="background:rgba(17,24,39,0.4);border-top:1px solid rgba(55,65,81,0.4);border-bottom:1px solid rgba(55,65,81,0.4)" class="py-24">
+  <div class="max-w-3xl mx-auto px-4">
+    <div class="text-center mb-14">
+      <h2 class="font-black mb-3" style="font-size:clamp(2rem,4vw,3rem)">Preguntas frecuentes</h2>
+    </div>
+    <div class="space-y-3" id="faq-container">
+
+      <div class="card overflow-hidden">
+        <button class="faq-btn w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+          <span class="font-semibold text-sm sm:text-base pr-4">¿Cómo cobro mis ganancias en Ecuador?</span>
+          <span class="text-2xl flex-shrink-0 icon" style="color:#f472b6">+</span>
+        </button>
+        <div class="faq-answer" style="border-top:1px solid rgba(55,65,81,0.5)">
+          <p class="p-5 text-sm text-gray-400 leading-relaxed">Puedes retirar tu dinero directamente a tu cuenta Takenos, cuenta bancaria ecuatoriana, o vía Payphone. El proceso toma 1-2 días hábiles y el mínimo de retiro es $10.</p>
+        </div>
+      </div>
+
+      <div class="card overflow-hidden">
+        <button class="faq-btn w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+          <span class="font-semibold text-sm sm:text-base pr-4">¿Cuánto cobra la plataforma?</span>
+          <span class="text-2xl flex-shrink-0 icon" style="color:#f472b6">+</span>
+        </button>
+        <div class="faq-answer" style="border-top:1px solid rgba(55,65,81,0.5)">
+          <p class="p-5 text-sm text-gray-400 leading-relaxed">DancePay cobra solo el <strong class="text-white">20% de comisión</strong> por cada sticker recibido. El 80% restante va directamente a tu billetera y puedes retirarlo cuando quieras, sin ningún costo adicional.</p>
+        </div>
+      </div>
+
+      <div class="card overflow-hidden">
+        <button class="faq-btn w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+          <span class="font-semibold text-sm sm:text-base pr-4">¿Cuánto cuesta un sticker?</span>
+          <span class="text-2xl flex-shrink-0 icon" style="color:#f472b6">+</span>
+        </button>
+        <div class="faq-answer" style="border-top:1px solid rgba(55,65,81,0.5)">
+          <p class="p-5 text-sm text-gray-400 leading-relaxed">Tú como bailarina defines el precio de cada sticker, desde $0.50 hasta $500. Puedes crear diferentes tipos: un saludo ($1), un baile básico ($3), un show premium ($10), un show exclusivo ($50).</p>
+        </div>
+      </div>
+
+      <div class="card overflow-hidden">
+        <button class="faq-btn w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+          <span class="font-semibold text-sm sm:text-base pr-4">¿Necesito una cámara profesional?</span>
+          <span class="text-2xl flex-shrink-0 icon" style="color:#f472b6">+</span>
+        </button>
+        <div class="faq-answer" style="border-top:1px solid rgba(55,65,81,0.5)">
+          <p class="p-5 text-sm text-gray-400 leading-relaxed">No. Puedes hacer tus shows desde el celular sin ningún equipo especial. Lo importante es bailar y conectar con tu audiencia. Muchas bailarinas empezaron con solo su teléfono.</p>
+        </div>
+      </div>
+
+      <div class="card overflow-hidden">
+        <button class="faq-btn w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+          <span class="font-semibold text-sm sm:text-base pr-4">¿Los espectadores necesitan registrarse?</span>
+          <span class="text-2xl flex-shrink-0 icon" style="color:#f472b6">+</span>
+        </button>
+        <div class="faq-answer" style="border-top:1px solid rgba(55,65,81,0.5)">
+          <p class="p-5 text-sm text-gray-400 leading-relaxed">Sí, necesitan crear una cuenta gratis para poder enviar stickers y recargar créditos. Ver los shows en vivo es completamente gratuito y no requiere registro.</p>
+        </div>
+      </div>
+
+      <div class="card overflow-hidden">
+        <button class="faq-btn w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+          <span class="font-semibold text-sm sm:text-base pr-4">¿Es seguro para mis datos bancarios?</span>
+          <span class="text-2xl flex-shrink-0 icon" style="color:#f472b6">+</span>
+        </button>
+        <div class="faq-answer" style="border-top:1px solid rgba(55,65,81,0.5)">
+          <p class="p-5 text-sm text-gray-400 leading-relaxed">Sí. Tus datos de pago se guardan encriptados y nunca se comparten con terceros. Los retiros se verifican manualmente antes de procesarse para garantizar tu seguridad.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ CTA FINAL ═══════ -->
+<section id="registro" class="py-32 px-4 text-center relative overflow-hidden">
+  <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 60% 60% at 50% 50%, rgba(219,39,119,0.12), transparent)"></div>
+  <div class="relative z-10 max-w-2xl mx-auto">
+    <h2 class="font-black mb-6 leading-none" style="font-size:clamp(3rem,8vw,5.5rem)">
+      Empieza hoy.<br>
+      <span class="gradient-text">Es gratis.</span>
+    </h2>
+    <p class="text-gray-400 text-lg mb-10 leading-relaxed">
+      Únete a las bailarinas que ya están cobrando por sus shows en vivo.<br>
+      Sin costo de registro, sin mensualidad, sin letra pequeña.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="https://github.com/rootsrex/ROOTS-TECH" target="_blank" class="btn-primary text-lg" style="padding:16px 40px">
+        💃 Soy bailarina — Unirme
+      </a>
+      <a href="https://github.com/rootsrex/ROOTS-TECH" target="_blank" class="btn-secondary text-lg" style="padding:16px 40px">
+        👁 Soy espectador — Unirme
+      </a>
+    </div>
+    <p class="text-xs text-gray-600 mt-5">Al registrarte aceptas nuestros términos de uso · Mayores de 18 años</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ FOOTER ═══════ -->
+<footer style="border-top:1px solid rgba(55,65,81,0.5)" class="py-16 px-4">
+  <div class="max-w-5xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+      <div class="md:col-span-2">
+        <div class="text-2xl font-black mb-4" style="color:#f472b6">💃 DancePay</div>
+        <p class="text-sm text-gray-500 max-w-xs leading-relaxed mb-5">
+          La plataforma ecuatoriana para que las bailarinas cobren por sus shows en vivo mediante stickers digitales.
+        </p>
+        <div class="flex gap-3">
+          <div class="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-colors" style="background:rgba(31,41,55,0.8);border:1px solid rgba(55,65,81,0.5)">📸</div>
+          <div class="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-colors" style="background:rgba(31,41,55,0.8);border:1px solid rgba(55,65,81,0.5)">🐦</div>
+          <div class="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-colors" style="background:rgba(31,41,55,0.8);border:1px solid rgba(55,65,81,0.5)">📘</div>
+          <div class="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-colors" style="background:rgba(31,41,55,0.8);border:1px solid rgba(55,65,81,0.5)">▶️</div>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-bold text-sm mb-5 text-gray-300">Plataforma</h4>
+        <ul class="space-y-3 text-sm text-gray-500">
+          <li><a href="#explorar" class="hover:text-white transition-colors">Explorar bailarinas</a></li>
+          <li><a href="#registro" class="hover:text-white transition-colors">Registrarse gratis</a></li>
+          <li><a href="#como-funciona" class="hover:text-white transition-colors">Cómo funciona</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Para bailarinas</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-sm mb-5 text-gray-300">Legal</h4>
+        <ul class="space-y-3 text-sm text-gray-500">
+          <li><a href="#" class="hover:text-white transition-colors">Términos de uso</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Política de privacidad</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Contacto</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Reportar problema</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 text-sm text-gray-600" style="border-top:1px solid rgba(55,65,81,0.4)">
+      <span>© 2024 DancePay. Hecho con ❤️ en Ecuador 🇪🇨</span>
+      <span>20% comisión · 80% para la bailarina · Retiros en 1-2 días hábiles</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const isOpen = answer.classList.contains('open');
+
+  // cerrar todos
+  document.querySelectorAll('.faq-answer.open').forEach(el => el.classList.remove('open'));
+  document.querySelectorAll('.faq-btn.open').forEach(el => el.classList.remove('open'));
+
+  if (!isOpen) {
+    answer.classList.add('open');
+    btn.classList.add('open');
+  }
+}
+
+// Animación suave al hacer scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('section > div, .card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>
