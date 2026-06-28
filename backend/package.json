@@ -23,6 +23,7 @@
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "socket.io": "^4.7.4",
+    "typescript": "^5.3.3",
     "uuid": "^9.0.1",
     "zod": "^3.22.4"
   },
@@ -34,7 +35,6 @@
     "@types/node": "^20.11.20",
     "@types/uuid": "^9.0.8",
     "prisma": "^5.10.2",
-    "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "tsx": "^4.7.1"
   }
 }
