@@ -34,10 +34,11 @@ model Dancer {
   isVerified   Boolean @default(false)
   contentLevel String  @default("BASIC")
 
-  takenos      String?
+  whatsapp     String  @default("")
+  takenos      String  @default("")
+  cedula       String  @default("")
   bankAccount  String?
   bankName     String?
-  cedula       String?
 
   user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   stickerPacks     StickerPack[]

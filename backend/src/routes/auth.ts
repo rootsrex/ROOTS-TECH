@@ -20,6 +20,9 @@ const registerSchema = z.object({
   password: z.string().min(6, 'Mínimo 6 caracteres'),
   role: z.enum(['VIEWER', 'DANCER']),
   displayName: z.string().min(2).max(50).optional(),
+  whatsapp: z.string().optional(),
+  takenos: z.string().optional(),
+  cedula: z.string().optional(),
 });
 
 const loginSchema = z.object({
@@ -44,7 +47,13 @@ router.post('/register', async (req: Request, res: Response) => {
     return;
   }
 
-  const { email, username, password, role, displayName } = parsed.data;
+  const { email, username, password, role, displayName, whatsapp, takenos, cedula } = parsed.data;
+
+  if (role === 'DANCER') {
+    if (!whatsapp) { res.status(400).json({ error: 'El número de WhatsApp es requerido' }); return; }
+    if (!takenos) { res.status(400).json({ error: 'El ID de TakeNos es requerido' }); return; }
+    if (!cedula) { res.status(400).json({ error: 'La cédula es requerida' }); return; }
+  }
 
   const exists = await prisma.user.findFirst({
     where: { OR: [{ email }, { username }] },
@@ -64,7 +73,14 @@ router.post('/register', async (req: Request, res: Response) => {
       role,
       wallet: { create: { balanceUSD: 0, totalEarned: 0, totalWithdrawn: 0 } },
       ...(role === 'DANCER' ? {
-        dancer: { create: { displayName: displayName || username } },
+        dancer: {
+          create: {
+            displayName: displayName || username,
+            whatsapp: whatsapp || '',
+            takenos: takenos || '',
+            cedula: cedula || '',
+          },
+        },
       } : {}),
     },
   });
