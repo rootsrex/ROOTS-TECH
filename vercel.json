@@ -1,6 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "cd backend && npm install && npx prisma generate && npx tsc && cd ../frontend && npm install && npm run build",
+  "installCommand": "cd backend && npm install && cd ../frontend && npm install",
+  "buildCommand": "cd backend && npx prisma generate && npx tsc && cd ../frontend && npm run build",
   "outputDirectory": "frontend/dist",
   "functions": {
     "api/index.ts": {
@@ -10,6 +11,6 @@
   },
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/index" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/((?!api).*)", "destination": "/index.html" }
   ]
 }
