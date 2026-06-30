@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { requireAuth, AuthRequest } from '../middleware/auth';
-import { io } from '../index';
+import { getIo } from '../ioManager';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -139,7 +139,8 @@ router.post('/send', requireAuth, async (req: AuthRequest, res: Response) => {
     }),
   ]);
 
-  if (sessionId) {
+  const io = getIo();
+  if (io && sessionId) {
     io.to(`session:${sessionId}`).emit('gift_received', {
       gift, senderName: (tx as any).sender?.username, quantity, message, animation: gift.animation,
     });
