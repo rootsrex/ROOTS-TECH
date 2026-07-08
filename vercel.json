@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "installCommand": "R=$(git rev-parse --show-toplevel) && (cd $R/backend && npm install) && (cd $R/frontend && npm install)",
-  "buildCommand": "R=$(git rev-parse --show-toplevel) && (cd $R/backend && npx prisma generate) && (cd $R/frontend && npm run build) && (cp -r $R/frontend/dist $R/dist 2>/dev/null; true)",
-  "outputDirectory": "dist",
+  "installCommand": "cd backend && npm install && cd ../frontend && npm install",
+  "buildCommand": "cd backend && npx prisma generate && cd ../frontend && npm run build",
+  "outputDirectory": "frontend/dist",
   "functions": {
     "api/index.ts": {
       "maxDuration": 30,
